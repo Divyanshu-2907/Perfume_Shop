@@ -1,0 +1,106 @@
+/* 🔹 Dark-Themed Banner */
+.banner {
+  position: relative;
+  width: 100%;
+  height: 60vh;
+  background: url("../assets/banner-dark.png") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  overflow: hidden;
+}
+
+/* 🔹 Dark Overlay */
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+}
+
+/* 🔹 Banner Content */
+.banner-content {
+  position: relative;
+  z-index: 1;
+  max-width: 600px;
+  padding: 20px;
+}
+
+/* 🔹 Title Animation */
+.banner-content h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  opacity: 0;
+  animation: fadeInUp 1s ease-out forwards;
+}
+
+/* 🔹 Subtitle Animation */
+.banner-content p {
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeInUp 1.2s ease-out forwards;
+}
+
+/* 🔹 Button Styling */
+.shop-now-btn {
+  padding: 12px 25px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  background: linear-gradient(45deg, #ffcc00, #e6b800);
+  color: #222;
+  cursor: pointer;
+  transition: 0.3s;
+  border-radius: 25px;
+  animation: fadeInUp 1.5s ease-out forwards, glow 1.5s infinite alternate ease-in-out;
+}
+
+.shop-now-btn:hover {
+  background: linear-gradient(45deg, #ffd700, #cda000);
+  transform: scale(1.05);
+}
+
+/* 🔹 Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 223, 0, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(255, 223, 0, 0.8);
+  }
+}
+
+/* 🔹 Responsive Design */
+@media screen and (max-width: 768px) {
+  .banner {
+    height: 50vh;
+  }
+  .banner-content h1 {
+    font-size: 2.2rem;
+  }
+  .banner-content p {
+    font-size: 1rem;
+  }
+  .shop-now-btn {
+    font-size: 1rem;
+    padding: 10px 20px;
+  }
+}
