@@ -10,7 +10,8 @@ app.use(cors());
 app.use(express.json());
 
 // ✅ MongoDB Connection
-mongoose.connect(process.env.MONGO_URI)
+const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGO_URI;
+mongoose.connect(MONGODB_URI)
     .then(() => console.log("✅ MongoDB Connected"))
     .catch(err => {
         console.error("❌ MongoDB Connection Error:", err);
@@ -19,6 +20,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 // ✅ Routes
 app.use("/api/products", require("./routes/productRoutes"));
+app.use("/api/fragrance-quiz", require("./routes/fragranceQuiz"));
 
 // ✅ Default Route
 app.get("/", (req, res) => {
