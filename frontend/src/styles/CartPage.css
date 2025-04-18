@@ -90,6 +90,8 @@
   font-size: 2rem;
   color: #2d3748;
   margin-bottom: 0.5rem;
+  margin-top: 5.5rem;
+  flex: auto;
 }
 
 .cart-header p {

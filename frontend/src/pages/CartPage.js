@@ -1,45 +1,49 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FiShoppingCart, FiTrash2, FiPlus, FiMinus, FiArrowLeft, FiHeart } from "react-icons/fi";
+import {
+  FiShoppingCart, FiTrash2, FiPlus, FiMinus,
+  FiArrowLeft, FiHeart
+} from "react-icons/fi";
 import "../styles/CartPage.css";
+import { useCart } from "../context/CartContext"; // 
 
 const CartPage = () => {
-  const [cart, setCart] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { cartItems: cart, removeFromCart, setCartItems } = useCart();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    setCart(savedCart);
-    setIsLoading(false);
-  }, []);
+    if (cart) {
+      setLoading(false);
+    }
+  }, [cart]);
 
-  const updateQuantity = (index, newQuantity) => {
+  const updateQuantity = (item, newQuantity) => {
     if (newQuantity < 1) return;
-    const updatedCart = [...cart];
-    updatedCart[index].quantity = newQuantity;
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    item.quantity = newQuantity;
+    setCartItems([...cart]);
   };
 
-  const removeItem = (index) => {
-    const updatedCart = cart.filter((_, i) => i !== index);
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  const handleQuantityChange = (item, value) => {
+    const quantity = Math.max(1, parseInt(value));
+    if (!isNaN(quantity)) updateQuantity(item, quantity);
   };
 
   const moveToWishlist = (item) => {
-    const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    if (!wishlist.some(wishlistItem => wishlistItem._id === item._id)) {
-      wishlist.push(item);
-      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    try {
+      const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+      if (!wishlist.some(w => w._id === item._id)) {
+        localStorage.setItem("wishlist", JSON.stringify([...wishlist, item]));
+      }
+      removeFromCart(item._id);
+    } catch (err) {
+      setError("There was an issue moving the item to the wishlist.");
     }
-    removeItem(cart.indexOf(item));
   };
 
-  const calculateSubtotal = () => {
-    return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  };
+  const calculateSubtotal = () =>
+    cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const calculateTotal = () => {
     const subtotal = calculateSubtotal();
@@ -47,22 +51,15 @@ const CartPage = () => {
     return subtotal + shipping;
   };
 
-  const handleCheckout = () => {
-    navigate("/checkout");
-  };
-
-  if (isLoading) {
-    return (
-      <div className="cart-page">
-        <div className="loading">
-          <div className="loading-spinner"></div>
-          <p>Loading your cart...</p>
-        </div>
-      </div>
-    );
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
-  if (cart.length === 0) {
+  if (error) {
+    return <div className="error-message">{error}</div>;
+  }
+
+  if (!cart.length) {
     return (
       <div className="cart-page">
         <div className="empty-cart">
@@ -92,24 +89,12 @@ const CartPage = () => {
           {cart.map((item, index) => (
             <div key={index} className="cart-item">
               <div className="cart-item-image-container">
-                <img
-                  src={item.images[0]}
-                  alt={item.name}
-                  className="cart-item-image"
-                />
+                <img src={item.images[0]} alt={item.name} className="cart-item-image" />
                 <div className="item-actions">
-                  <button
-                    className="action-btn wishlist-btn"
-                    onClick={() => moveToWishlist(item)}
-                    title="Move to Wishlist"
-                  >
+                  <button className="action-btn wishlist-btn" onClick={() => moveToWishlist(item)}>
                     <FiHeart />
                   </button>
-                  <button
-                    className="action-btn remove-btn"
-                    onClick={() => removeItem(index)}
-                    title="Remove Item"
-                  >
+                  <button className="action-btn remove-btn" onClick={() => removeFromCart(item._id)}>
                     <FiTrash2 />
                   </button>
                 </div>
@@ -118,24 +103,17 @@ const CartPage = () => {
                 <h3 className="cart-item-name">{item.name}</h3>
                 <p className="cart-item-price">${item.price.toFixed(2)}</p>
                 <div className="cart-item-quantity">
-                  <button
-                    className="quantity-btn"
-                    onClick={() => updateQuantity(index, item.quantity - 1)}
-                    disabled={item.quantity <= 1}
-                  >
+                  <button className="quantity-btn" onClick={() => updateQuantity(item, item.quantity - 1)} disabled={item.quantity <= 1}>
                     <FiMinus />
                   </button>
                   <input
                     type="number"
                     className="quantity-input"
                     value={item.quantity}
-                    onChange={(e) => updateQuantity(index, parseInt(e.target.value))}
+                    onChange={(e) => handleQuantityChange(item, e.target.value)}
                     min="1"
                   />
-                  <button
-                    className="quantity-btn"
-                    onClick={() => updateQuantity(index, item.quantity + 1)}
-                  >
+                  <button className="quantity-btn" onClick={() => updateQuantity(item, item.quantity + 1)}>
                     <FiPlus />
                   </button>
                 </div>
@@ -161,7 +139,7 @@ const CartPage = () => {
             <span>Total</span>
             <span>${calculateTotal().toFixed(2)}</span>
           </div>
-          <button className="checkout-btn" onClick={handleCheckout}>
+          <button className="checkout-btn" onClick={() => navigate("/checkout")}>
             Proceed to Checkout
           </button>
           <Link to="/products" className="continue-shopping-btn">
@@ -173,4 +151,4 @@ const CartPage = () => {
   );
 };
 
-export default CartPage; 
+export default CartPage;
