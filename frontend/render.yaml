@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: perfume-shop-frontend
+    runtime: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://perfume-shop-api.onrender.com
