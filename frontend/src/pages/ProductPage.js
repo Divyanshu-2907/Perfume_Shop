@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-// Assuming the CSS file is correctly imported elsewhere
-import '../styles/ProductPage.css';
+import "../styles/ProductPage.css";
+import { useCart } from "../context/CartContext";
 
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [cartItems, setCartItems] = useState([]);
+  const { cartItems, addToCart, removeFromCart } = useCart();
   const [filters, setFilters] = useState({
     category: "",
     minPrice: "",
@@ -25,12 +25,10 @@ const ProductPage = () => {
           throw new Error("Failed to fetch products");
         }
         const data = await response.json();
-        
-        // Check if the response has the expected structure
+
         if (data.success && Array.isArray(data.products)) {
           setProducts(data.products);
         } else if (Array.isArray(data)) {
-          // If the response is directly an array
           setProducts(data);
         } else {
           throw new Error("Invalid products data format");
@@ -38,7 +36,7 @@ const ProductPage = () => {
       } catch (err) {
         console.error("Error fetching products:", err);
         setError(err.message);
-        setProducts([]); // Ensure products is an empty array on error
+        setProducts([]);
       } finally {
         setLoading(false);
       }
@@ -49,25 +47,11 @@ const ProductPage = () => {
 
   // Filter products based on current filters and search term
   const filteredProducts = products.filter(product => {
-    // Category filter
-    if (filters.category && product.category !== filters.category) {
-      return false;
-    }
-    
-    // Price range filter
-    if (filters.minPrice && parseFloat(product.price) < parseFloat(filters.minPrice)) {
-      return false;
-    }
-    if (filters.maxPrice && parseFloat(product.price) > parseFloat(filters.maxPrice)) {
-      return false;
-    }
-    
-    // Search term filter
-    if (searchTerm && !product.name.toLowerCase().includes(searchTerm.toLowerCase()) && 
-        !product.description?.toLowerCase().includes(searchTerm.toLowerCase())) {
-      return false;
-    }
-    
+    if (filters.category && product.category !== filters.category) return false;
+    if (filters.minPrice && parseFloat(product.price) < parseFloat(filters.minPrice)) return false;
+    if (filters.maxPrice && parseFloat(product.price) > parseFloat(filters.maxPrice)) return false;
+    if (searchTerm && !product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        !product.description?.toLowerCase().includes(searchTerm.toLowerCase())) return false;
     return true;
   });
 
@@ -80,26 +64,19 @@ const ProductPage = () => {
         return parseFloat(b.price) - parseFloat(a.price);
       case "newest":
         return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-      default: // featured or any other case
-        return 0; // maintain original order
+      default:
+        return 0;
     }
   });
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
+  const handleSearchChange = (e) => setSearchTerm(e.target.value);
 
-  const clearSearch = () => {
-    setSearchTerm("");
-  };
+  const clearSearch = () => setSearchTerm("");
 
   const clearFilters = () => {
     setFilters({
@@ -111,29 +88,7 @@ const ProductPage = () => {
     setSearchTerm("");
   };
 
-  const addToCart = (product) => {
-    setCartItems((prev) => {
-      // Check if product is already in cart
-      const existingItem = prev.find(item => item._id === product._id);
-      if (existingItem) {
-        // Increase quantity if already in cart
-        return prev.map(item => 
-          item._id === product._id 
-            ? { ...item, quantity: item.quantity + 1 } 
-            : item
-        );
-      } else {
-        // Add new item with quantity 1
-        return [...prev, { ...product, quantity: 1 }];
-      }
-    });
-  };
-
-  const removeFromCart = (productId) => {
-    setCartItems(prev => prev.filter(item => item._id !== productId));
-  };
-
-  const cartTotal = cartItems.reduce((total, item) => 
+  const cartTotal = cartItems.reduce((total, item) =>
     total + parseFloat(item.price) * item.quantity, 0);
 
   if (loading) {
@@ -158,9 +113,7 @@ const ProductPage = () => {
     <>
       <div className="page-headers">
         <h1>Our Products</h1>
-        <p class="tagline">Explore our curated collection of premium fragrances.</p>
-
-
+        <p className="tagline">Explore our curated collection of premium fragrances.</p>
       </div>
 
       <div className="products-container">
@@ -168,10 +121,10 @@ const ProductPage = () => {
           <div className="search-filter-section">
             <div className="search-box">
               <span className="search-icon">🔍</span>
-              <input 
-                type="text" 
-                className="search-input" 
-                placeholder="Search products..." 
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Search products..."
                 value={searchTerm}
                 onChange={handleSearchChange}
               />
@@ -182,9 +135,7 @@ const ProductPage = () => {
 
             <div className="filter-controls">
               <div className="filter-group">
-                <label>
-                  <span>Category</span>
-                </label>
+                <label><span>Category</span></label>
                 <select
                   className="category-select"
                   name="category"
@@ -199,9 +150,7 @@ const ProductPage = () => {
               </div>
 
               <div className="filter-group">
-                <label>
-                  <span>Price Range</span>
-                </label>
+                <label><span>Price Range</span></label>
                 <div className="price-range-inputs">
                   <input
                     type="number"
@@ -222,9 +171,7 @@ const ProductPage = () => {
               </div>
 
               <div className="filter-group">
-                <label>
-                  <span>Sort By</span>
-                </label>
+                <label><span>Sort By</span></label>
                 <select
                   className="category-select"
                   name="sortBy"
@@ -280,13 +227,8 @@ const ProductPage = () => {
                       </span>
                     </div>
                     <div className="product-actions">
-                      {/* Updated to match the exact URL structure used in ProductDetailPage */}
-                      <Link to={`/products/${product._id}`} className="view-btn">
-                        Details
-                      </Link>
-                      <button className="cart-btn" onClick={() => addToCart(product)}>
-                        Add to Cart
-                      </button>
+                      <Link to={`/products/${product._id}`} className="view-btn">Details</Link>
+                      <button className="cart-btn" onClick={() => addToCart(product)}>Add to Cart</button>
                     </div>
                   </div>
                 </div>
@@ -294,9 +236,7 @@ const ProductPage = () => {
             ) : (
               <div className="no-products">
                 <p>No products match your filters.</p>
-                <button className="clear-filters-btn" onClick={clearFilters}>
-                  Clear Filters
-                </button>
+                <button className="clear-filters-btn" onClick={clearFilters}>Clear Filters</button>
               </div>
             )}
           </div>
@@ -320,35 +260,23 @@ const ProductPage = () => {
                     />
                     <div className="cart-item-details">
                       <h4 className="cart-name">{item.name}</h4>
-                      <p className="cart-price">
-                        ${item.price} × {item.quantity}
-                      </p>
-                      <button 
-                        className="remove-btn" 
-                        onClick={() => removeFromCart(item._id)}
-                      >
-                        Remove
-                      </button>
+                      <p className="cart-price">${item.price} × {item.quantity}</p>
+                      <button className="remove-btn" onClick={() => removeFromCart(item._id)}>Remove</button>
                     </div>
                   </li>
                 ))}
               </ul>
-              <div className="cart-footer">
-                <div className="cart-total">
-                  <span>Total:</span>
-                  <span>${cartTotal.toFixed(2)}</span>
-                </div>
-                <Link to="/checkout" className="checkout-btn">
-                  Proceed to Checkout
-                </Link>
+              <div className="cart-total">
+                <span>Total: </span><span>${cartTotal.toFixed(2)}</span>
+              </div>
+              <div className="cart-actions">
+                <Link to="/checkout" className="checkout-btn">Proceed to Checkout</Link>
               </div>
             </>
           ) : (
             <div className="cart-empty">
               <p>Your cart is empty</p>
-              <Link to="/products" className="continue-shopping">
-                Continue Shopping
-              </Link>
+              <Link to="/products" className="continue-shopping">Continue Shopping</Link>
             </div>
           )}
         </div>

@@ -344,6 +344,7 @@
   grid-template-columns: 1fr auto auto auto;
   gap: 0.75rem;
   align-items: center;
+  
 }
 
 .view-product-btn {
@@ -361,8 +362,32 @@
   background-color: #0056b3;
 }
 
-.add-to-cart-btn,
-.wishlist-btn,
+.add-to-cart-btn{
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: white;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wishlist-btn{
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: white;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .share-btn {
   width: 40px;
   height: 40px;
