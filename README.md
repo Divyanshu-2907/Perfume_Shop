@@ -42,8 +42,8 @@ A full-stack web application for browsing and buying perfumes, built with **Reac
 🙋‍♂️ Author
 Divyanshu Kumar
 📧 dk5506934@gmail.com
-🔗 LinkedIn (https://www.linkedin.com/in/divyanshukr7/)
-💻 GitHub (https://github.com/Divyanshu-2907)
+[🔗 LinkedIn] (https://www.linkedin.com/in/divyanshukr7/)
+[💻 GitHub] (https://github.com/Divyanshu-2907)
 
 
 
