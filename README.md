@@ -6,7 +6,7 @@ A full-stack web application for browsing and buying perfumes, built with **Reac
 
 ## 🌐 Live Demo
 
-- **Perfume_Shop:** [https://perfume-shop.onrender.com](https://perfume-shop-e-commerce-0hwl.onrender.com)
+- **Perfume_Shop:** [https://perfume-shop.onrender.com](https://perfume-shop-e-commerce-kucm.onrender.com)
 ---
 
 ## 🚀 Features
