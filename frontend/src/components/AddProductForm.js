@@ -42,7 +42,7 @@ const AddProductForm = ({ onProductAdded }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/products", newProduct);
+      await axios.post("https://perfume-shop-e-commerce.onrender.com/api/products", newProduct);
       setNewProduct({
         name: "",
         description: "",
