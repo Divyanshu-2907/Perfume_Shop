@@ -41,7 +41,7 @@ const ProductDetailPage = () => {
         // Log the API request
         console.log(`Fetching product with ID: ${id}`);
         
-        const response = await axios.get(`http://localhost:5000/api/products/${id}`);
+        const response = await axios.get(`https://perfume-shop-e-commerce.onrender.com/api/products/${id}`);
         
         // Log the response
         console.log('Product response:', response.data);
@@ -54,7 +54,7 @@ const ProductDetailPage = () => {
         
         // Fetch related products
         try {
-          const relatedResponse = await axios.get(`http://localhost:5000/api/products/related/${id}`);
+          const relatedResponse = await axios.get(`https://perfume-shop-e-commerce.onrender.com/api/products/related/${id}`);
           console.log('Related products response:', relatedResponse.data);
           setRelatedProducts(relatedResponse.data);
         } catch (relatedError) {
@@ -140,7 +140,7 @@ const ProductDetailPage = () => {
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:5000/api/products/${id}/reviews`, reviewForm);
+      const response = await axios.post(`https://perfume-shop-e-commerce.onrender.com/api/products/${id}/reviews`, reviewForm);
       setProduct(response.data);
       setShowReviewForm(false);
       setReviewForm({
